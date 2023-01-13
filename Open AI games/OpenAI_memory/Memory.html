@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Memory Game</title>
+  <style>
+    /* CSS styles for game board */
+    body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 50px;
+}
+
+#game-board {
+  display: flex;
+  flex-wrap: wrap;
+  width: 50%;
+  margin: 0 auto;
+}
+
+.card {
+  width: 20%;
+  height: 100px;
+  margin: 10px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  font-size: 36px;
+  line-height: 100px;
+}
+
+.card.matched {
+  background-color: #ccc;
+  border-color: #fff;
+}
+
+  </style>
+</head>
+<body>
+  <h1>Memory Game</h1>
+  <div id="game-board"></div>
+  <script>
+    // JavaScript for game logic
+    var cards = ['A', 'A', 'B', 'B', 'C', 'C', 'D', 'D', 'E', 'E','F','F'];
+    var gameBoard = document.getElementById('game-board');
+    var selectedCards = [];
+    var matches = 0;
+    
+    // Shuffle cards
+    cards = shuffle(cards);
+    
+    // Create game board
+    for (var i = 0; i < cards.length; i++) {
+      var card = document.createElement('div');
+      card.classList.add('card');
+      card.dataset.cardValue = cards[i];
+      gameBoard.appendChild(card);
+      
+      // Add event listener for click event
+      card.addEventListener('click', function(e) {
+        var clickedCard = e.target;
+        
+        // Do not allow matching of already matched cards
+        if (clickedCard.classList.contains('matched')) {
+          return;
+        }
+        
+        // Show the card's value
+        clickedCard.innerHTML = clickedCard.dataset.cardValue;
+        
+        // Check for match
+        if (selectedCards.length === 1) {
+          if (clickedCard.dataset.cardValue === selectedCards[0].dataset.cardValue) {
+            // Cards match
+            clickedCard.classList.add('matched');
+            selectedCards[0].classList.add('matched');
+            matches++;
+            
+            // Check for end of game
+            if (matches === cards.length / 2) {
+              alert('Congratulations! You won!');
+            }
+          } else {
+            // Cards do not match
+            setTimeout(function() {
+              clickedCard.innerHTML = '';
+              selectedCards[0].innerHTML = '';
+            }, 1000);
+          }
+          
+          selectedCards = [];
+        } else {
+          selectedCards.push(clickedCard);
+        }
+      });
+    }
+    
+    // Fisher-Yates shuffle algorithm
+    function shuffle(array) {
+      var currentIndex = array.length, temporaryValue, randomIndex;
+      
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+      }
+      
+      return array;
+    }
+  </script>
+</body>
+</html>

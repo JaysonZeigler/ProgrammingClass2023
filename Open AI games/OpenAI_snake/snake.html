@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Snake Game</title>
+  <style>
+    /* some CSS styles for the game board */
+    #board {
+      width: 500px;
+      height: 500px;
+      border: 1px solid black;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="board"></div>
+
+  <script>
+    // JavaScript code for the game goes here
+    // game constants
+const BOARD_SIZE = 500;
+const BLOCK_SIZE = 10;
+const BOARD_ROWS = BOARD_SIZE / BLOCK_SIZE;
+const BOARD_COLS = BOARD_SIZE / BLOCK_SIZE;
+
+// game variables
+let board;
+let snake;
+let food;
+let direction;
+let gameInterval;
+
+// initialize the game
+function init() {
+  // create the game board
+  board = document.getElementById("board");
+  board.style.width = BOARD_SIZE + "px";
+  board.style.height = BOARD_SIZE + "px";
+
+  // create the snake
+  snake = [{x: BOARD_ROWS / 2, y: BOARD_COLS / 2}];
+
+  // create the food
+  food = {x: 0, y: 0};
+  spawnFood();
+
+  // set the initial direction
+  direction = "right";
+
+  // start the game loop
+  gameInterval = setInterval(gameLoop, 100);
+}
+
+// the main game loop
+function gameLoop() {
+  // move the snake in the current direction
+  moveSnake();
+
+  // check if the snake hit the food
+  if (snake[0].x === food.x && snake[0].y === food.y) {
+    spawnFood();
+    growSnake();
+  }
+
+  // check if the snake hit the wall or itself
+  if (snake[0].x < 0 || snake[0].x >= BOARD_ROWS || snake[0].y < 0 || snake[0].y >= BOARD_COLS || checkCollision()) {
+    gameOver();
+  }
+
+  // update the game board
+  updateBoard();
+}
+
+// move the snake in the current direction
+function moveSnake() {
+  let head = {x: snake[0].x, y: snake[0].y};
+
+  if (direction === "right") {
+    head.y++;
+  } else if (direction === "left") {
+    head.y--;
+  } else if (direction === "up") {
+    head.x--;
+  } else if (direction === "down") {
+    head.x++;
+  }
+
+  snake.unshift(head);
+  snake.pop();
+}
+
+// check if the snake hit itself
+function checkCollision() {
+  for (let i = 1; i < snake.length; i++) {
+    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// spawn new food on the board
+function spawnFood() {
+  food.x = Math.floor(Math.random() * BOARD_ROWS);
+  food.y = Math.floor(Math.random() * BOARD_COLS);
+}
+
+// grow the snake when it eats food
+function growSnake() {
+  let tail = {x: snake[snake.length - 1].x, y: snake[snake.length - 1].y};
+  snake.push(tail);
+}
+
+// update the game board
+function updateBoard() {
+  board.innerHTML = "";
+  for (let i = 0; i < BOARD_ROWS; i++) {
+    for (let j = 0; j < BOARD_COLS; j++) {
+      let block = document.createElement("div");
+      block.style.width = BLOCK_SIZE + "px";
+      block.style.height = BLOCK_SIZE + "px";
+      block.style.background = "white";
+      block.style.border = "1px solid black";
+      block.style.position = "absolute";
+      block.style.left = j * BLOCK_SIZE + "px";
+      block.style.top = i * BLOCK_SIZE + "px";
+
+      if (i === food.x && j === food.y) {
+        block.style.background = "red";
+      }
+
+      for (let k = 0; k < snake.length; k++) {
+        if (i === snake[k].x && j === snake[k].y) {
+          block.style.background = "green";
+          break;
+        }
+      }
+
+      board.appendChild(block);
+    }
+  }
+}
+
+// handle key press events
+document.onkeydown = function(event) {
+  switch (event.keyCode) {
+    case 37:
+      if (direction !== "right") {
+        direction = "left";
+      }
+      break;
+    case 38:
+      if (direction !== "down") {
+        direction = "up";
+      }
+      break;
+    case 39:
+      if (direction !== "left") {
+        direction = "right";
+      }
+      break;
+    case 40:
+      if (direction !== "up") {
+        direction = "down";
+      }
+      break;
+  }
+}
+
+// handle game over event
+function gameOver() {
+  clearInterval(gameInterval);
+  alert("Game Over!");
+}
+
+// start the game
+init();
+</body>
+</html>

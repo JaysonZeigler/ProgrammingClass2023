@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Minesweeper</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <div class="container">
+        <h1>Minesweeper</h1>
+        <div class="controls">
+            <div id="timer"></div>
+            <div id="difficulty">
+                <select id="difficulty-select" onchange="changeDifficulty()">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+            <div id="restart" onclick="restart()">Restart</div>
+        </div>
+        <div id="grid-container"></div>
+    </div>
+    <div class="scoreboard">
+        <h2>High Scores</h2>
+        <ul id="scores"></ul>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
